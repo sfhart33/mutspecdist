@@ -1,0 +1,19 @@
+Package: mutspecdist
+Title: Compare Aggregate Mutation Spectra Distance Between Groups
+Version: 0.1.0
+Authors@R: 
+    person("Samuel", "Hart", , "sfhart33@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-5068-2199"))
+Description: A method to calculate significance of a difference between 
+    two groups of mutation spectra by comparing the distance between the 
+    aggregate spectra to a null distribution produced by random sampling,
+    outputting a p-value.
+License: `use_mit_license()`
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+	ggplot2
+Depends: 
+    R (>= 3.5)
+LazyData: true
