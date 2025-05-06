@@ -1,0 +1,56 @@
+---
+title: "AMSD github README"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# mutspecdist: package to run Aggregate Mutation Spectrum Distance (AMSD)
+
+*figure image here*
+
+## Installation
+
+```{r, echo = FALSE}
+# install.packages("devtools")
+devtools::install_github("sfhart33/mutspecdist")
+library(mutspecdist)
+```
+
+## Example
+
+Load example data
+```{r}
+data(mouse_sample_table)
+data(mouse_carcinogen_spectra)
+mouse_sample_table
+mouse_carcinogen_spectra
+```
+Example comparison: TCP-exposed vs control mouse tumors
+```{r}
+# mutation spectra for tumors exposed to TCP
+  exposure <- mouse_sample_table$exposure == "1,2,3_TRICHLOROPROPANE" &
+    mouse_sample_table$tissue == "LIVER"
+  exp_samples <-  mouse_sample_table$label[exposure]
+  exp_spectra <- mouse_carcinogen_spectra[exp_samples,]
+  exp_spectra
+
+# mutation spectra for spontaneously arising tumors
+  control <- mouse_sample_table$exposure == "SPONTANEOUS" &
+      mouse_sample_table$tissue == "LIVER"
+  con_samples <- mouse_sample_table$label[control]
+  con_spectra <- mouse_carcinogen_spectra[con_samples,]
+  con_spectra
+```
+Run AMSD
+```{r}
+# Run AMSD
+  exp_v_con <- amsd(exp_spectra,
+                    con_spectra,
+                    seed = 123)
+# Visualize result
+  # plot_amsd_histogram(exp_v_con)
+```
+
