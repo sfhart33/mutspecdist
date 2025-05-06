@@ -51,6 +51,6 @@ Run AMSD
                     con_spectra,
                     seed = 123)
 # Visualize result
-  # plot_amsd_histogram(exp_v_con)
+  plot_amsd_histogram(exp_v_con)
 ```
 
