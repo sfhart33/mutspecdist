@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Installation
 
-```{r, echo = FALSE}
+```{r install-load, include=FALSE, message=FALSE, warning=FALSE}
 # install.packages("devtools")
 devtools::install_github("sfhart33/mutspecdist")
 library(mutspecdist)
@@ -22,11 +22,11 @@ library(mutspecdist)
 ## Example
 
 Load example data
-```{r}
+```{r example-data, echo=TRUE, message=FALSE, warning=FALSE}
 data(mouse_sample_table)
 data(mouse_carcinogen_spectra)
-mouse_sample_table
-mouse_carcinogen_spectra
+head(mouse_sample_table)
+head(mouse_carcinogen_spectra)
 ```
 Example comparison: TCP-exposed vs control mouse tumors
 ```{r}
@@ -35,16 +35,16 @@ Example comparison: TCP-exposed vs control mouse tumors
     mouse_sample_table$tissue == "LIVER"
   exp_samples <-  mouse_sample_table$label[exposure]
   exp_spectra <- mouse_carcinogen_spectra[exp_samples,]
-  exp_spectra
+  exp_samples
 
 # mutation spectra for spontaneously arising tumors
   control <- mouse_sample_table$exposure == "SPONTANEOUS" &
       mouse_sample_table$tissue == "LIVER"
   con_samples <- mouse_sample_table$label[control]
   con_spectra <- mouse_carcinogen_spectra[con_samples,]
-  con_spectra
+  con_samples
 ```
-Run AMSD
+Run AMSD and plot output
 ```{r}
 # Run AMSD
   exp_v_con <- amsd(exp_spectra,
