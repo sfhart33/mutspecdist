@@ -1,5 +1,5 @@
 ---
-title: "AMSD github README"
+title: "**mutspecdist**: package to run Aggregate Mutation Spectrum Distance (AMSD)"
 output: github_document
 ---
 
@@ -7,13 +7,18 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# mutspecdist: package to run Aggregate Mutation Spectrum Distance (AMSD)
+<img src="man/figures/Figure1_2025-04-29.png" width="100%" />
 
-*figure image here*
+- Input mutation spectra for each sample in a cohort divided into two groups. As an example here we have a group of tumors unexposed (blue) or exposed (gold) to carcinogen.
+- AMSD aggregates mutation spectra for each group and calculates the cosine distance between the aggregate spectra (green).
+- AMSD also randomly reshuffles group labels to calculate the cosine distance between randomly sampled tumors (grey), repeating 1000+ times to create a null distribution expectation.
+- AMSD then calculates a p-value from the fraction of random samplings that are greater than or equal to the observed distance between the two groups, as visualized in the histogram.
+- To interpret what mutational mechanisms may be behind a significant difference, we recommend applying mutational signature fitting to the aggregate spectra and/or individual samples and comparing between the two groups.
+
 
 ## Installation
 
-```{r install-load, include=FALSE, message=FALSE, warning=FALSE}
+```{r install-load, include=TRUE, message=FALSE, warning=FALSE}
 # install.packages("devtools")
 devtools::install_github("sfhart33/mutspecdist")
 library(mutspecdist)
@@ -24,33 +29,85 @@ library(mutspecdist)
 Load example data
 ```{r example-data, echo=TRUE, message=FALSE, warning=FALSE}
 data(mouse_sample_table)
-data(mouse_carcinogen_spectra)
-head(mouse_sample_table)
-head(mouse_carcinogen_spectra)
+knitr::kable(head(mouse_sample_table))
+
+data(mouse_carcinogen_counts)
+knitr::kable(head(mouse_carcinogen_counts))
+
+mouse_carcinogen_spectra <- mouse_carcinogen_counts/rowSums(mouse_carcinogen_counts)
 ```
 Example comparison: TCP-exposed vs control mouse tumors
 ```{r}
-# mutation spectra for tumors exposed to TCP
-  exposure <- mouse_sample_table$exposure == "1,2,3_TRICHLOROPROPANE" &
-    mouse_sample_table$tissue == "LIVER"
+# function to output spectra
+group_spectra <- function(spectra, exp, tis){
+  exposure <- mouse_sample_table$exposure == exp &
+    mouse_sample_table$tissue == tis
   exp_samples <-  mouse_sample_table$label[exposure]
-  exp_spectra <- mouse_carcinogen_spectra[exp_samples,]
-  exp_samples
+  exp_spectra <- spectra[exp_samples,]
+  return(exp_spectra)
+}
+
+# mutation spectra for tumors exposed to Oxazepam
+  ox_spectra <- group_spectra(mouse_carcinogen_spectra, "OXAZEPAM", "LIVER")
+  knitr::kable(ox_spectra)
 
 # mutation spectra for spontaneously arising tumors
-  control <- mouse_sample_table$exposure == "SPONTANEOUS" &
-      mouse_sample_table$tissue == "LIVER"
-  con_samples <- mouse_sample_table$label[control]
-  con_spectra <- mouse_carcinogen_spectra[con_samples,]
-  con_samples
+  control_spectra <- group_spectra(mouse_carcinogen_spectra, "SPONTANEOUS", "LIVER")
+  knitr::kable(control_spectra)
 ```
 Run AMSD and plot output
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Run AMSD
-  exp_v_con <- amsd(exp_spectra,
-                    con_spectra,
+  exp_v_con <- amsd(ox_spectra,
+                    control_spectra,
                     seed = 123)
 # Visualize result
   plot_amsd_histogram(exp_v_con)
+```
+Run with more permutaitons for a more accurate p-value
+```{r}
+  exp_v_con <- amsd(ox_spectra,
+                    control_spectra,
+                    n_sim = 10000,
+                    seed = 123)
+  plot_amsd_histogram(exp_v_con)
+```
+Run with a noisier exposure sample set
+```{r}
+  tcp_spectra <- group_spectra(mouse_carcinogen_spectra, "1,2,3_TRICHLOROPROPANE", "LIVER")
+  control_spectra <- group_spectra(mouse_carcinogen_spectra, "SPONTANEOUS", "LIVER")
+
+  exp_v_con <- amsd(tcp_spectra,
+                    control_spectra,
+                    n_sim = 10000,
+                    seed = 123)
+  plot_amsd_histogram(exp_v_con)
+```
+A closer look reveals that 6/10,000 re-sampling permutations (too small to see on histogram) have the same cosine distance as the observed between the exposure and control sets, indicating they sampled the original sets by chance
+```{r}
+exp_v_con$cosine
+exp_v_con$sims[exp_v_con$sims >= exp_v_con$cosine]
+```
+
+Run with with "sum" option on mutation counts rather than mutation type fractions, which changes the permutation cosine distance distribution, but not the ultimate result, indicating the result is not driven by high- or low-mutation outliers
+```{r}
+  tcp_counts <- group_spectra(mouse_carcinogen_counts, "1,2,3_TRICHLOROPROPANE", "LIVER")
+  control_counts <- group_spectra(mouse_carcinogen_counts, "SPONTANEOUS", "LIVER")
+  rowSums(tcp_counts)
+  rowSums(control_counts)
+  
+  exp_v_con <- amsd(tcp_counts,
+                    control_counts,
+                    mean_or_sum = "sum",
+                    n_sim = 10000,
+                    seed = 123)
+  plot_amsd_histogram(exp_v_con)
+  
+```
+
+
+```{r}
+
+
 ```
 
