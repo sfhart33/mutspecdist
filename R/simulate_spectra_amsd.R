@@ -7,7 +7,7 @@
 #' @param sig_probs Specify signatures to sample from and the fraction of
 #'	signatures to sample from each
 #' @param signatures Matrix of signature spectra, with each row a signature 
-#'	specified by rowname. Must incude names from sig_probs
+#'	specified by rowname. Must incude names same from sig_probs
 #' @param additional_sig Additional signature to add as an exposure
 #' @param n_extra Number of mutations to sample from additional signature
 #' @param n_sim Number of null resampling permutations to run
