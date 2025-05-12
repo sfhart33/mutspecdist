@@ -24,7 +24,7 @@ simulate_spectra_amsd(
 signatures to sample from each}
 
 \item{signatures}{Matrix of signature spectra, with each row a signature
-specified by rowname. Must incude names from sig_probs}
+specified by rowname. Must incude same names from sig_probs}
 
 \item{additional_sig}{Additional signature to add as an exposure}
 
