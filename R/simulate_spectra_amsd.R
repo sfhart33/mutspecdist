@@ -27,6 +27,7 @@ simulate_spectra_amsd <- function(n_samples, n_mutations, sig_probs, signatures,
                                        sig_probs = sig_probs,
                                        signatures = signatures)
   no_exposure_test <- as.data.frame(do.call(rbind, no_exposure_test))
+  no_exposure_test <- no_exposure_test/rowSums(no_exposure_test) # convert to mutaion fractions
   with_exposure_test <- simulate_spectra(n_samples = n_samples,
                                          n_mutations = n_mutations,
                                          sig_probs = sig_probs,
@@ -34,6 +35,7 @@ simulate_spectra_amsd <- function(n_samples, n_mutations, sig_probs, signatures,
                                          additional_sig = additional_sig,
                                          n_extra = n_extra)
   with_exposure_test <- as.data.frame(do.call(rbind, with_exposure_test))
+  with_exposure_test <- with_exposure_test/rowSums(with_exposure_test) # convert to mutaion fractions
   amsd(no_exposure_test, with_exposure_test, n_sim = n_sim, seed = seed) %>%
     return()
 }
