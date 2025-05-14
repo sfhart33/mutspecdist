@@ -17,7 +17,6 @@
 #'	random sampling permutations that are greater than or equal to the
 #'	observed cosine distance, $sims = cosine distance for each of the random
 #'	sampling permutations.
-
 #' @export
 simulate_spectra_amsd <- function(n_samples, n_mutations, sig_probs, signatures, additional_sig, n_extra, n_sim, seed) {
   
@@ -36,6 +35,5 @@ simulate_spectra_amsd <- function(n_samples, n_mutations, sig_probs, signatures,
                                          n_extra = n_extra)
   with_exposure_test <- as.data.frame(do.call(rbind, with_exposure_test))
   with_exposure_test <- with_exposure_test/rowSums(with_exposure_test) # convert to mutaion fractions
-  amsd(no_exposure_test, with_exposure_test, n_sim = n_sim, seed = seed) %>%
-    return()
+  return(amsd(no_exposure_test, with_exposure_test, n_sim = n_sim, seed = seed))
 }
