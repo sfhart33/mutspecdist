@@ -2,10 +2,19 @@
 (AMSD)
 ================
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/sfhart33/mutspecdist/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sfhart33/mutspecdist/actions/workflows/R-CMD-check.yaml)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+<!-- badges: end -->
+
+## Table of Contents
+
 - [AMSD method summary](#amsd-method-summary)
-- [Citation](#citation)
 - [Installation](#installation)
+- [Main Functions](#main-functions)
 - [Usage Example](#usage-example)
+- [Citation](#citation)
 
 ## AMSD method summary
 
@@ -27,16 +36,6 @@
   aggregate spectra and/or individual samples and comparing between the
   two groups.
 
-## Citation
-
-If you use this R package or results for your own research, please use
-the following citation:
-
-- Hart S.F.M., Alcala N., Feder A.F., Harris K. (under review). [*A
-  signature-agnostic test for differences between tumor mutation spectra
-  reveals carcinogen and ancestry
-  effects*](https://github.com/sfhart33/AMSD_cancer_mutation_spectra/tree/main).
-
 ## Installation
 
 ``` r
@@ -45,9 +44,22 @@ devtools::install_github("sfhart33/mutspecdist")
 library(mutspecdist)
 ```
 
+## Main Functions
+
+- `amsd()` – run the core AMSD test and return cosine distance, null
+  distribution, and p-value
+- `plot_amsd_histogram()` – plot the null distribution with observed
+  distance
+- `simulate_spectra()` – simulate spectra using trinucleotide signatures
+- `cosine_dist()` – calculate the cosine distance between two vectors
+
 ## Usage Example
 
-Load example data
+Load example data (data is from “[The mutational signature profile of
+known and suspected human carcinogens in
+mice](https://www.nature.com/articles/s41588-020-0692-4)” by Riva et
+al. Raw data is available
+[here](https://github.com/team113sanger/mouse-mutatation-signatures/blob/master/starting_data/snvs.rds))
 
 ``` r
 data(mouse_sample_table)
@@ -205,3 +217,13 @@ between tumor mutation spectra reveals carcinogen and ancestry
 effects*](https://github.com/sfhart33/AMSD_cancer_mutation_spectra/tree/main)”
 for further examples of usage and downstream mutational signature
 analysis to interpret results
+
+## Citation
+
+If you use this R package or results for your own research, please use
+the following citation:
+
+- Hart S.F.M., Alcala N., Feder A.F., Harris K. (under review). [*A
+  signature-agnostic test for differences between tumor mutation spectra
+  reveals carcinogen and ancestry
+  effects*](https://github.com/sfhart33/AMSD_cancer_mutation_spectra/tree/main).
