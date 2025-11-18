@@ -12,6 +12,7 @@
 #'	when comapring mutation counts)
 #' @param n_sim Number of null resampling permutations to run (default = 1000)
 #' @param seed Specify seed for reproducibility (default = NULL)
+#' @param override Logical; if TRUE, bypasses the rowSum validation checks
 #' @return A list of three results: $cosine = observed cosine distance between
 #'	the aggragate group spectra, $p  = p-value denoting the fraction of the
 #'	random sampling permutations that are greater than or equal to the
@@ -22,7 +23,8 @@ amsd <- function(set1,
                  set2,
                  mean_or_sum = "mean",  # or "sum"
                  n_sim = 1000,
-                 seed = NULL) {   
+                 seed = NULL,
+                 override = FALSE) {   
   
   # Validate inputs
   if (!is.matrix(set1) && !is.data.frame(set1)) stop("set1 must be a matrix or data.frame")
@@ -31,15 +33,22 @@ amsd <- function(set1,
   if (!mean_or_sum %in% c("mean", "sum")) {
     stop("Argument 'mean_or_sum' must be either 'mean' or 'sum'")
   }	
+		
+  if (!override) { # NOTE updated this to fix rounding error and allow for override
 
-  if (mean_or_sum == "mean" & max(c(rowSums(set1), rowSums(set2)) > 1)) {
-    stop("Spectra fractions should add up to 1 when running 'mean_or_sum' = 'mean'")
+    max_rs <- round(max(c(rowSums(set1), rowSums(set2))), digits = 2)
+
+    if (mean_or_sum == "mean" && max_rs > 1) {
+      stop("Spectra fractions should add up to 1 when running 'mean_or_sum' = 'mean'.
+           (Use override = TRUE to bypass.)")
+    }
+
+    if (mean_or_sum == "sum" && max_rs <= 1) {
+      stop("Run 'mean_or_sum' = 'mean' for fractional mutation spectra that add up to 1.
+           (Use override = TRUE to bypass.)")
+    }
   }
 
-  if (mean_or_sum == "sum" & max(c(rowSums(set1), rowSums(set2)) <= 1)) {
-    stop("Run 'mean_or_sum' = 'mean' for fractional mutation spectra that add up to 1")
-  }
-  
   # Define aggregation function
   aggragate_spectra <- if (mean_or_sum == "mean") {
     function(data) colMeans(data, na.rm = TRUE)

@@ -4,7 +4,14 @@
 \alias{amsd}
 \title{Run Aggragate Mutation Spectrum Distance Method}
 \usage{
-amsd(set1, set2, mean_or_sum = "mean", n_sim = 1000, seed = NULL)
+amsd(
+  set1,
+  set2,
+  mean_or_sum = "mean",
+  n_sim = 1000,
+  seed = NULL,
+  override = FALSE
+)
 }
 \arguments{
 \item{set1}{A matrix or data.frame of mutation spectra for group 1}
@@ -19,6 +26,8 @@ when comapring mutation counts)}
 \item{n_sim}{Number of null resampling permutations to run (default = 1000)}
 
 \item{seed}{Specify seed for reproducibility (default = NULL)}
+
+\item{override}{Logical; if TRUE, bypasses the rowSum validation checks}
 }
 \value{
 A list of three results: $cosine = observed cosine distance between
